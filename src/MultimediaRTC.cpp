@@ -13,7 +13,7 @@ extern "C"
 #include "SDL/SDL.h"
 };
 
-
+const char* deviceName = "video=Logitech HD Webcam C310"; 
 //Refresh Event
 #define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)
 #define SFM_BREAK_EVENT  (SDL_USEREVENT + 2)
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 		printf("Can't find the dshow device!!\n"); 
 	}
 
-	if (avformat_open_input(&pFormatCtx, "video=USB Camera", pInputFormat, NULL) != 0)
+	if (avformat_open_input(&pFormatCtx, deviceName, pInputFormat, NULL) != 0)
 	{
 		printf("Can't open input stream.\n");
 		return -1;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
 		Step 3: Get stream and codec information.
 	*/
 	// Read packets of a media file to get stream information.
-	if (avformat_find_stream_info(pFormatCtx , NULL) < 0)
+	if (avformat_find_stream_info(pFormatCtx, NULL) < 0)
 	{
 		printf("Couldn't find stream information.\n");
 		return -1;
@@ -129,8 +129,8 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	SDL_Overlay *bmp; 
-	bmp = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height,SDL_YV12_OVERLAY, pScreen); 
+	SDL_Overlay *bmp = NULL; 
+	bmp = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height, SDL_YV12_OVERLAY, pScreen); 
 	SDL_Rect rect;
 	rect.x = 0;    
 	rect.y = 0;    

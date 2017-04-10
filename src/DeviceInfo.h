@@ -8,7 +8,7 @@
 // Show dshow Device
 void ShowDShowDevice(); 
 
-// Show dshow DeviceOption
+// Show dshow Device Option
 void ShowDShowDeviceOption(); 
 
 #endif //_DEVICE_INFO_H 
