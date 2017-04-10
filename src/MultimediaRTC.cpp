@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 	rect.y = 0;    
 	rect.w = screenW;    
 	rect.h = screenH;  
-	//SDL End------------------------
+	// SDL End------------------------
 
 	/*
 		Step 5: Get raw frames video data.
@@ -153,22 +153,22 @@ int main(int argc, char* argv[])
 				AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL); 
 	//------------------------------
 	SDL_Thread *videoThread = SDL_CreateThread(SfpRefreshThread, NULL);
-	//
 	SDL_WM_SetCaption("MultimediaRTC", NULL);
-	//Event Loop
+	// Event Loop
 	SDL_Event event;
 
 	for ( ; ; ) 
 	{
-		//Wait
+		// Wait
 		SDL_WaitEvent(&event);
 		if (event.type == SFM_REFRESH_EVENT)
 		{
-			//------------------------------
+			// Return the next frame of a stream
 			if (av_read_frame(pFormatCtx, pPacket) >= 0)
 			{
 				if (pPacket->stream_index == videoIndex)
 				{
+					// Decode the video frame of size pPacket->size from pPacket->data into pFrame.
 					ret = avcodec_decode_video2(pCodecCtx, pFrame, &gotPicture, pPacket);
 					if (ret < 0)
 					{
@@ -178,13 +178,18 @@ int main(int argc, char* argv[])
 					if (gotPicture)
 					{
 						SDL_LockYUVOverlay(bmp);
-						pFrameYUV->data[0]=bmp->pixels[0];
-						pFrameYUV->data[1]=bmp->pixels[2];
-						pFrameYUV->data[2]=bmp->pixels[1];     
-						pFrameYUV->linesize[0]=bmp->pitches[0];
-						pFrameYUV->linesize[1]=bmp->pitches[2];   
-						pFrameYUV->linesize[2]=bmp->pitches[1];
-						sws_scale(imgConvertCtx, (const unsigned char* const*)pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameYUV->data, pFrameYUV->linesize);
+						pFrameYUV->data[0] = bmp->pixels[0];
+						pFrameYUV->data[1] = bmp->pixels[2];
+						pFrameYUV->data[2] = bmp->pixels[1];     
+						pFrameYUV->linesize[0] = bmp->pitches[0];
+						pFrameYUV->linesize[1] = bmp->pitches[2];   
+						pFrameYUV->linesize[2] = bmp->pitches[1];
+						// Scale the image slice in pFrame and put the resulting 
+						// scaled slice in the image in pFrameYUV
+						sws_scale(imgConvertCtx, 
+							(const unsigned char* const*)pFrame->data, 
+							pFrame->linesize, 0, pCodecCtx->height, 
+							pFrameYUV->data, pFrameYUV->linesize);
 
 						SDL_UnlockYUVOverlay(bmp); 	
 						SDL_DisplayYUVOverlay(bmp, &rect); 
@@ -212,7 +217,7 @@ int main(int argc, char* argv[])
 	sws_freeContext(imgConvertCtx);
 
 	/*
-		Step 5: Encode the raw frames video data into packet(h.264)
+		Step 5: Encode the raw frames video data into packet(h.264).
 	*/
 
 	/*
@@ -231,4 +236,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-
