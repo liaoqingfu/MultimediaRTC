@@ -4,4 +4,6 @@ set(ENCODING_DEP_LIB avcodec.lib avdevice.lib avfilter.lib avformat.lib avutil.l
 
 add_executable(Encoding ${ENCODING_SRC})
 
+add_subdirectory(EncodeH264)
+
 target_link_libraries(Encoding ${ENCODING_DEP_LIB})
