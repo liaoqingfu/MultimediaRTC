@@ -18,6 +18,8 @@ const char* deviceName = "video=Logitech HD Webcam C310";
 #define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)
 #define SFM_BREAK_EVENT  (SDL_USEREVENT + 2)
 
+#define OUTPUT_YUV420P 1
+
 int threadExit=0;
 
 int SfpRefreshThread(void *opaque)
@@ -72,7 +74,7 @@ int main(int argc, char* argv[])
 	// Read packets of a media file to get stream information.
 	if (avformat_find_stream_info(pFormatCtx, NULL) < 0)
 	{
-		printf("Couldn't find stream information.\n");
+		printf("Can't find stream information.\n");
 		return -1;
 	}
 		
@@ -87,7 +89,7 @@ int main(int argc, char* argv[])
 	}
 	if (videoIndex == -1)
 	{
-		printf("Couldn't find a video stream.\n");
+		printf("Can't find a video stream.\n");
 		return -1;
 	}
 
@@ -121,7 +123,10 @@ int main(int argc, char* argv[])
 	SDL_Surface *pScreen; 
 	screenW = pCodecCtx->width;
 	screenH = pCodecCtx->height;
-	pScreen = SDL_SetVideoMode(screenW, screenH, 0,0);
+	printf("The YUV pixel width is: %d\n", pCodecCtx->width); 
+	printf("The YUV pixel height is: %d\n", pCodecCtx->height); 
+
+	pScreen = SDL_SetVideoMode(screenW, screenH, 0, 0);
 
 	if (!pScreen) 
 	{  
@@ -129,8 +134,9 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	SDL_Overlay *bmp = NULL; 
-	bmp = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height, SDL_YV12_OVERLAY, pScreen); 
+	SDL_Overlay *displayOverlay = NULL; 
+	displayOverlay = SDL_CreateYUVOverlay(pCodecCtx->width, pCodecCtx->height,SDL_YV12_OVERLAY, pScreen); 
+
 	SDL_Rect rect;
 	rect.x = 0;    
 	rect.y = 0;    
@@ -157,6 +163,10 @@ int main(int argc, char* argv[])
 	// Event Loop
 	SDL_Event event;
 
+#if OUTPUT_YUV420P 
+	FILE *pFileYUV=fopen("output.yuv","wb+");  
+#endif  
+
 	for ( ; ; ) 
 	{
 		// Wait
@@ -177,13 +187,13 @@ int main(int argc, char* argv[])
 					}
 					if (gotPicture)
 					{
-						SDL_LockYUVOverlay(bmp);
-						pFrameYUV->data[0] = bmp->pixels[0];
-						pFrameYUV->data[1] = bmp->pixels[2];
-						pFrameYUV->data[2] = bmp->pixels[1];     
-						pFrameYUV->linesize[0] = bmp->pitches[0];
-						pFrameYUV->linesize[1] = bmp->pitches[2];   
-						pFrameYUV->linesize[2] = bmp->pitches[1];
+						SDL_LockYUVOverlay(displayOverlay);
+						pFrameYUV->data[0] = displayOverlay->pixels[0];
+						pFrameYUV->data[1] = displayOverlay->pixels[2];
+						pFrameYUV->data[2] = displayOverlay->pixels[1];     
+						pFrameYUV->linesize[0] = displayOverlay->pitches[0];
+						pFrameYUV->linesize[1] = displayOverlay->pitches[2];   
+						pFrameYUV->linesize[2] = displayOverlay->pitches[1];
 						// Scale the image slice in pFrame and put the resulting 
 						// scaled slice in the image in pFrameYUV
 						sws_scale(imgConvertCtx, 
@@ -191,8 +201,14 @@ int main(int argc, char* argv[])
 							pFrame->linesize, 0, pCodecCtx->height, 
 							pFrameYUV->data, pFrameYUV->linesize);
 
-						SDL_UnlockYUVOverlay(bmp); 	
-						SDL_DisplayYUVOverlay(bmp, &rect); 
+#if OUTPUT_YUV420P  
+						int y_size=pCodecCtx->width*pCodecCtx->height;    
+						fwrite(pFrameYUV->data[0], 1, y_size, pFileYUV);  //Y   
+						fwrite(pFrameYUV->data[1], 1, y_size/4, pFileYUV);  //U  
+						fwrite(pFrameYUV->data[2], 1, y_size/4, pFileYUV);  //V  
+#endif 
+						SDL_UnlockYUVOverlay(displayOverlay); 	
+						SDL_DisplayYUVOverlay(displayOverlay, &rect); 
 
 					}
 				}
@@ -220,6 +236,7 @@ int main(int argc, char* argv[])
 		Step 5: Encode the raw frames video data into packet(h.264).
 	*/
 
+
 	/*
 		Step 6: Format the packet data into mp4. 
 	*/
@@ -229,6 +246,9 @@ int main(int argc, char* argv[])
 		Step 7: Do some clean up work.
 	*/
 	SDL_Quit();
+#if OUTPUT_YUV420P 
+	fclose(pFileYUV);
+#endif 
 	av_packet_free(&pPacket); 
 	av_free(pFrameYUV);
 	avcodec_close(pCodecCtx);
