@@ -13,7 +13,7 @@ extern "C"
 #include "SDL/SDL.h"
 };
 
-const char* deviceName = "video=Logitech HD Webcam C310"; 
+const char* deviceName = "video=USB Camera"; 
 //Refresh Event
 #define SFM_REFRESH_EVENT  (SDL_USEREVENT + 1)
 #define SFM_BREAK_EVENT  (SDL_USEREVENT + 2)
