@@ -235,6 +235,10 @@ int main(int argc, char* argv[])
 	//Write file trailer
 	av_write_trailer(pOutFmtCtxA);
 	av_write_trailer(pOutFmtCtxV);
+
+	/*
+		Step 7: Clean up.
+	*/
 end:
 	avformat_close_input(&pInFmtCtx);
 	/* close output */
