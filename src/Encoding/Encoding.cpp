@@ -210,7 +210,6 @@ int main(int argc, char **argv)
     encode(c, NULL, pkt, f);
 
     fclose(f);
-
     av_frame_free(&frame);
     av_packet_free(&pkt);
     avcodec_free_context(&c);

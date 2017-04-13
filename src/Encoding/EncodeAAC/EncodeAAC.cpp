@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 	*/
 	av_register_all();
 
+
 	/*
 		Step 2: Set up input audio stream.
 	*/
@@ -68,14 +69,15 @@ int main(int argc, char* argv[])
 
 	// Method 1.
 	AVFormatContext* pFormatCtx = NULL;
-	pFormatCtx = avformat_alloc_context();
-	AVOutputFormat* pOutputFmt = NULL;
-	pOutputFmt = av_guess_format(NULL, pOutFile, NULL);
-	pFormatCtx->oformat = pOutputFmt;
+	//pFormatCtx = avformat_alloc_context();
+	//AVOutputFormat* pOutputFmt = NULL;
+	//pOutputFmt = av_guess_format(NULL, pOutFile, NULL);
+	//pFormatCtx->oformat = pOutputFmt;
 
-	// Method 2.
-	// avformat_alloc_output_context2(&pFormatCtx, NULL, NULL, pOutFile);
-	// fmt = pFormatCtx->oformat;
+	 ///Method 2.
+	 avformat_alloc_output_context2(&pFormatCtx, NULL, NULL, pOutFile);
+	 AVOutputFormat* pOutputFmt = NULL;
+	 pOutputFmt = pFormatCtx->oformat;
 
 	if (avio_open(&pFormatCtx->pb, pOutFile, AVIO_FLAG_READ_WRITE) < 0)
 	{
@@ -85,7 +87,8 @@ int main(int argc, char* argv[])
 
 	AVStream* pAStream = NULL;
 	pAStream = avformat_new_stream(pFormatCtx, 0);
-	if (pAStream == NULL)
+
+		if (pAStream == NULL)
 	{
 		printf("Filed to add a new stream!\n"); 
 		return -1;
@@ -104,19 +107,20 @@ int main(int argc, char* argv[])
 	pCodecCtx->channel_layout = AV_CH_LAYOUT_STEREO;
 	pCodecCtx->channels = av_get_channel_layout_nb_channels(pCodecCtx->channel_layout);
 	pCodecCtx->bit_rate = 64000;  
-
+	
 	// Show some information
 	av_dump_format(pFormatCtx, 0, pOutFile, 1);
 
 	AVCodec* pCodec = NULL;
 	pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
+	avcodec_register(pCodec); 
 	if (!pCodec)
 	{
 		printf("Can not find encoder!\n");
 		return -1;
 	}
 
-	if (avcodec_open2(pCodecCtx, pCodec,NULL) < 0)
+	if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0)
 	{
 		printf("Failed to open encoder!\n");
 		return -1;
