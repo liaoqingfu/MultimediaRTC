@@ -24,6 +24,7 @@ add_subdirectory(ConvertRawData)
 add_subdirectory(Encoding)
 add_subdirectory(Muxing)
 add_subdirectory(Transcoding)
+add_subdirectory(Device)
 #//////////////////////////////////////
 
 add_executable(MultimediaRTC ${SRC_LIST})
