@@ -23,7 +23,7 @@ using namespace std;
 
 
 #define MAX_AUDIO_FRAME_SIZE 192000 // 1 second of 48khz 32bit audio
-int threadExit=0;
+int threadExit = 0;
 
 string WConverToUTF8(wstring szText); 
 
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
 	AVPacket *packet = NULL;
 	packet = (AVPacket *)av_malloc(sizeof(AVPacket));
 	av_init_packet(packet);
-	int ret = -1, gotPicture = 0;
+
 	// Out Audio Param.
 	uint64_t outChannelLayout = AV_CH_LAYOUT_STEREO;
 	// nb_samples: AAC-1024 MP3-1152
@@ -170,12 +170,12 @@ int main(int argc, char* argv[])
 	AVFrame	*pFrame = NULL;
 	pFrame = av_frame_alloc();
 
-
-
+	int gotPicture = 0, ret = 0; 
 	FILE *pFilePCM=fopen("c://work//output.pcm","wb+");  
 	// Event Loop
 	int index = 0; 
 	SDL_Event event;
+
 	for ( ; ; ) 
 	{
 		// Wait
@@ -232,7 +232,6 @@ int main(int argc, char* argv[])
 
 	fclose(pFilePCM);
 	av_free(outBuffer); 
-	av_packet_free(&packet); 
 	avcodec_close(pCodecCtx);
 	avformat_close_input(&pFormatCtx);
 

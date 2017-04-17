@@ -7,7 +7,7 @@ link_directories(${PROJECT_SOURCE_DIR}/lib)
 # ffmpeg libraries
 set(FFMPEG_LIB avcodec.lib avdevice.lib avfilter.lib avformat.lib avutil.lib postproc.lib swresample.lib swscale.lib)
 # SDL libraries
-set(SDL_LIB SDL2.lib SDL2main.lib SDL2test.lib)
+set(SDL_LIB SDL.lib SDLmain.lib)
 
 # ffmpeg libraries path 
 set(CMAKE_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/lib)
