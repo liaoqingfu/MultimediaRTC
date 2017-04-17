@@ -225,17 +225,7 @@ int main(int argc, char* argv[])
 
 	}
 	/*
-		Step 5: Encode the raw frames video data into packet(h.264).
-	*/
-
-
-	/*
-		Step 6: Format the packet data into mp4. 
-	*/
-
-
-	/*
-		Step 7: Do some clean up work.
+		Step 6: Clean up
 	*/
 	swr_free(&auConvertCtx); 
 	SDL_Quit();
