@@ -225,7 +225,7 @@ int main(int argc, char* argv[])
 
 	}
 	/*
-		Step 6: Clean up
+		Step 6: Clean up.
 	*/
 	swr_free(&auConvertCtx); 
 	SDL_Quit();

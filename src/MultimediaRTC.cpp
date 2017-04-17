@@ -24,7 +24,7 @@ int threadExit=0;
 
 int SfpRefreshThread(void *opaque)
 {
-	threadExit=0;
+	threadExit = 0;
 	while (!threadExit) 
 	{
 		SDL_Event event;
@@ -119,13 +119,14 @@ int main(int argc, char* argv[])
 		printf( "Could not initialize SDL - %s\n", SDL_GetError()); 
 		return -1;
 	} 
-	int screenW = 0,screenH = 0;
-	SDL_Surface *pScreen; 
+	int screenW = 0, screenH = 0;
+
 	screenW = pCodecCtx->width;
 	screenH = pCodecCtx->height;
 	printf("The YUV pixel width is: %d\n", pCodecCtx->width); 
 	printf("The YUV pixel height is: %d\n", pCodecCtx->height); 
 
+	SDL_Surface *pScreen = NULL; 
 	pScreen = SDL_SetVideoMode(screenW, screenH, 0, 0);
 
 	if (!pScreen) 
@@ -233,17 +234,7 @@ int main(int argc, char* argv[])
 	sws_freeContext(imgConvertCtx);
 
 	/*
-		Step 5: Encode the raw frames video data into packet(h.264).
-	*/
-
-
-	/*
-		Step 6: Format the packet data into mp4. 
-	*/
-
-
-	/*
-		Step 7: Do some clean up work.
+		Step 6: Do some clean up work.
 	*/
 	SDL_Quit();
 #if OUTPUT_YUV420P 
