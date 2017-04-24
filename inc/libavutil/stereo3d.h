@@ -161,7 +161,7 @@ const char *av_stereo3d_type_name(unsigned int type);
 /**
  * Get the AVStereo3DType form a human-readable name.
  *
- * @param name The input string.
+ * @param type The input string.
  *
  * @return The AVStereo3DType value, or -1 if not found.
  */

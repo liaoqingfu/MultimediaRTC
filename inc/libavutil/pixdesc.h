@@ -22,7 +22,7 @@
 #ifndef AVUTIL_PIXDESC_H
 #define AVUTIL_PIXDESC_H
 
-//#include <inttypes.h>
+#include <inttypes.h>
 
 #include "attributes.h"
 #include "pixfmt.h"
@@ -171,11 +171,6 @@ typedef struct AVPixFmtDescriptor {
  * AV_PIX_FMT_RGB0 (or AV_PIX_FMT_RGB24 etc.) instead of AV_PIX_FMT_RGBA.
  */
 #define AV_PIX_FMT_FLAG_ALPHA        (1 << 7)
-
-/**
- * The pixel format is following a Bayer pattern
- */
-#define AV_PIX_FMT_FLAG_BAYER        (1 << 8)
 
 /**
  * Return the number of bits per pixel used by the pixel format
